@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserSettingsController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Support\Facades\Route;
 
@@ -15,11 +17,16 @@ Route::middleware([SetLocale::class])->group(function () {
 
         Route::middleware('auth')->group(function () {
             //User Settings routes
-            Route::get('user-settings', [UserSettingsController::class, 'index'])->name('users.index');
+            Route::resource('users', UserSettingsController::class);
             Route::get('/set-language', [SettingController::class, 'changeLocale'])->name('set.language');
             Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
             Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
             Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+        });
+
+        Route::middleware(['auth'])->group(function () {
+            Route::resource('roles', RoleController::class);
+            Route::resource('permissions', PermissionController::class);
         });
 });
 require __DIR__.'/auth.php';
